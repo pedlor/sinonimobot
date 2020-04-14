@@ -1,4 +1,4 @@
-const env = require('./.env')
+const env = require('../.env')
 const request = require('request-promise').defaults({ encoding: 'latin1' })
 const cheerio = require('cheerio')
 const http = require('http')
