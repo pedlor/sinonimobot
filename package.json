@@ -7,7 +7,7 @@
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "pedlor",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",

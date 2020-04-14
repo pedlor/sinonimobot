@@ -1,6 +1,7 @@
 const env = require('./.env')
 const request = require('request-promise').defaults({ encoding: 'latin1' })
 const cheerio = require('cheerio')
+const http = require('http')
 const Telegraf = require('telegraf')
 const bot = new Telegraf(env.token)
 
@@ -51,5 +52,14 @@ const fetchData = async (url) => {
 bot.on('message', async ctx => {
     ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
 })
+
+// server configuration
+const PORT = process.env.PORT || 8081
+
+http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'application/json'})
+    res.write(JSON.stringify({name: 'sinonimobot', ver: '1.0.0'}))
+    res.end()
+}).listen(PORT)
 
 bot.startPolling()
