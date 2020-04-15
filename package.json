@@ -1,10 +1,10 @@
 {
   "name": "sinonimobot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Telegram bot that shows the synonyms of a given word (PT-BR)",
   "main": "app.js",
   "scripts": {
-    "build": "node app.js"
+    "start": "node ."
   },
   "keywords": [],
   "author": "pedlor",

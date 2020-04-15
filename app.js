@@ -1,15 +1,9 @@
 //const env = require('./.env')
+require('http').createServer().listen(process.env.PORT)
 const axios = require('axios')
 const cheerio = require('cheerio')
-const http = require('http')
 const Telegraf = require('telegraf')
 const bot = new Telegraf(process.env.token, { polling: true })
-
-// server configuration
-const PORT = process.env.PORT || 8081
-http.createServer(() => {
-    console.log(`Server created at ${Date.now()}`)
-}).listen(PORT)
 
 // start bot command
 bot.start(async ctx => {
