@@ -55,11 +55,10 @@ bot.on('message', async ctx => {
 
 // server configuration
 const PORT = process.env.PORT || 8081
-
-//http.createServer((req, res) => {
-//    res.writeHead(200, {'Content-Type': 'application/json'})
-//    res.write(JSON.stringify({name: 'sinonimobot', ver: '1.0.0'}))
-//    res.end()
-//}).listen(PORT)
+http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'application/json'})
+    res.write(JSON.stringify({name: 'sinonimobot', ver: '1.0.0'}))
+    res.end()
+}).listen(PORT)
 
 bot.startPolling()
