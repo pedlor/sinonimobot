@@ -48,6 +48,7 @@ const fetchData = async (url) => {
         $('.s-wrapper').each((i, el) => {
             synonymsArray[i] = "Sentido: " + $(el).find('.sentido').text() + "\n" + $(el).find('.sinonimos').text() + "\n"
         })
+        return synonymsArray
     } catch (error) {
         console.log(`Error status:\n ${error.status}`)
         return null;
