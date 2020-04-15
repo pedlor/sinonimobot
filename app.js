@@ -1,9 +1,9 @@
-const env = require('./.env')
+//const env = require('./.env')
 const axios = require('axios')
 const cheerio = require('cheerio')
 const http = require('http')
 const Telegraf = require('telegraf')
-const bot = new Telegraf(env.token, { polling: true })
+const bot = new Telegraf(process.env.token, { polling: true })
 
 // server configuration
 const PORT = process.env.PORT || 8081
