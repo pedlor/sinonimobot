@@ -4,7 +4,7 @@
   "description": "Telegram bot that shows the synonyms of a given word (PT-BR)",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "build": "node app.js"
   },
   "keywords": [],
   "author": "pedlor",
@@ -12,9 +12,6 @@
   "dependencies": {
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
-    "needle": "^2.4.1",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.5",
     "telegraf": "3.17.3"
   }
 }

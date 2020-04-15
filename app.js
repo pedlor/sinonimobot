@@ -1,11 +1,15 @@
-//const env = require('./.env')
-//const request = require('request-promise').defaults({ encoding: 'latin1' })
+const env = require('./.env')
 const axios = require('axios')
-//const needle = require('needle')
 const cheerio = require('cheerio')
 const http = require('http')
 const Telegraf = require('telegraf')
-const bot = new Telegraf(process.env.token)
+const bot = new Telegraf(env.token, { polling: true })
+
+// server configuration
+const PORT = process.env.PORT || 8081
+http.createServer(() => {
+    console.log(`Server created at ${Date.now()}`)
+}).listen(PORT)
 
 // start bot command
 bot.start(async ctx => {
@@ -19,16 +23,20 @@ bot.start(async ctx => {
 bot.on('text', async ctx => {
     word = ctx.update.message.text
     url = createUrl(word)
-    //await needle('get', url).then(async (response) => {
     await fetchData(url).then( async (response) => {
         if(response) {
-            await ctx.replyWithMarkdown(`*${word}* é sinônimo de: `)
-            await ctx.reply(response.toString())
+            for(i = 0; i < response.length; i++) {
+                let meaningText =''
+                if(response[i].meaning != "") {
+                    meaningText = `🔶 Sentido da palavra: *${response[i].meaning}*`
+                }
+                let synonymsText = `✅ *Sinônimos*: ${response[i].synonyms}`
+                await ctx.replyWithMarkdown(meaningText + "\n\n" + synonymsText)
+            }
         } else {
             ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄')
         }
     }).catch((error) => {
-        //console.log(error)
         ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
     })
 })
@@ -46,8 +54,15 @@ const fetchData = async (url) => {
         $('.number').remove()
         let synonymsArray = []
         $('.s-wrapper').each((i, el) => {
-            synonymsArray[i] = "Sentido: " + $(el).find('.sentido').text() + "\n" + $(el).find('.sinonimos').text() + "\n"
+            let obj = {}
+            let meaning = $(el).find('.sentido').text()
+            let synonyms = $(el).find('.sinonimos').text()
+            obj.meaning = meaning.replace(':', '')
+            obj.synonyms = synonyms.substring(1)
+            
+            synonymsArray[i] = obj
         })
+
         return synonymsArray
     } catch (error) {
         console.log(`Error status:\n ${error.status}`)
@@ -60,12 +75,3 @@ bot.on('message', async ctx => {
     ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
 })
 
-// server configuration
-const PORT = process.env.PORT || 8081
-http.createServer((req, res) => {
-    res.writeHead(200, {'Content-Type': 'application/json'})
-    res.write(JSON.stringify({name: 'sinonimobot', ver: '1.0.0'}))
-    res.end()
-}).listen(PORT)
-
-bot.startPolling()
