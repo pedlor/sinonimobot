@@ -1,5 +1,7 @@
-//const env = require('.env')
-const request = require('request-promise').defaults({ encoding: 'latin1' })
+//const env = require('./.env')
+//const request = require('request-promise').defaults({ encoding: 'latin1' })
+const axios = require('axios')
+//const needle = require('needle')
 const cheerio = require('cheerio')
 const http = require('http')
 const Telegraf = require('telegraf')
@@ -17,6 +19,7 @@ bot.start(async ctx => {
 bot.on('text', async ctx => {
     word = ctx.update.message.text
     url = createUrl(word)
+    //await needle('get', url).then(async (response) => {
     await fetchData(url).then( async (response) => {
         if(response) {
             await ctx.replyWithMarkdown(`*${word}* é sinônimo de: `)
@@ -25,7 +28,7 @@ bot.on('text', async ctx => {
             ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄')
         }
     }).catch((error) => {
-        console.log(error)
+        //console.log(error)
         ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
     })
 })
@@ -37,13 +40,16 @@ const createUrl = word => { return url = `https://www.sinonimos.com.br/${word}` 
 const fetchData = async (url) => {
     let fetchedData
     try {
-        fetchedData = await request(url)
-
-        const $ = cheerio.load(fetchedData)
-        let synonyms = $('.sinonimos').first().text()
-        return synonyms
+        fetchedData = await axios.request(url, { responseEncoding : 'latin1'} )
+        const $ = cheerio.load(fetchedData.data)
+        
+        $('.number').remove()
+        let synonymsArray = []
+        $('.s-wrapper').each((i, el) => {
+            synonymsArray[i] = "Sentido: " + $(el).find('.sentido').text() + "\n" + $(el).find('.sinonimos').text() + "\n"
+        })
     } catch (error) {
-        console.log(`Something went wrong:\n ${error}`)
+        console.log(`Error status:\n ${error.status}`)
         return null;
     }
 }
