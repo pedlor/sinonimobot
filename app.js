@@ -1,9 +1,11 @@
 //const env = require('./.env')
-require('http').createServer().listen(process.env.PORT)
+require('http').createServer(() => {
+    console.log(`Server is running`)
+}).listen(process.env.PORT)
 const axios = require('axios')
 const cheerio = require('cheerio')
 const Telegraf = require('telegraf')
-const bot = new Telegraf(process.env.token, { polling: true })
+const bot = new Telegraf(process.env.token)
 
 // start bot command
 bot.start(async ctx => {
@@ -69,3 +71,4 @@ bot.on('message', async ctx => {
     ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
 })
 
+bot.startPolling()
