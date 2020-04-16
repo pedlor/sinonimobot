@@ -1,5 +1,5 @@
 # ignore environment variables and node_modules folder
 .env
 node_modules
-
+package-lock.json
 .now

@@ -4,7 +4,7 @@
   "description": "Telegram bot that shows the synonyms of a given word (PT-BR)",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js",
+    "test": "node .",
     "start": "node app.js"
   },
   "keywords": [],
