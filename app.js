@@ -1,7 +1,7 @@
 //const env = require('./.env')
 require('http').createServer(() => {
     console.log(`Server is running`)
-}).listen(3000)
+}).listen(process.env.PORT)
 const axios = require('axios')
 const cheerio = require('cheerio')
 const Telegraf = require('telegraf')
