@@ -22,13 +22,13 @@ bot.on('text', async ctx => {
     await fetchData(url).then(async (response) => {
         if (response) {
             for (i = 0; i < response.length; i++) {
-                if (response[meaningIndex].meaning != "") {
+                if (response[i].meaning != "") {
                     await ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n⚠ *Sentido da palavra*: ${response[meaningIndex].meaning}
-                    \n🔡 *Sinônimos*: ${response[meaningIndex].synonyms}`)
+                    \n⚠ *Sentido da palavra*: ${response[i].meaning}
+                    \n🔡 *Sinônimos*: ${response[i].synonyms}`)
                 } else {
                     await ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n✅ *Sinônimos*: ${response[meaningIndex].synonyms}`)
+                    \n✅ *Sinônimos*: ${response[i].synonyms}`)
                 }
             }
         } else {
