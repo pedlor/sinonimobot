@@ -15,6 +15,19 @@ bot.start(async ctx => {
     \n_Espero ser útil!_ ;)`)
 })
 
+// 'about' command
+bot.command('sobre', ctx => {
+    ctx.replyWithMarkdown(`❓ *Como usar?* - Para encontrar os sinônimos de uma palavra, envie uma mensagem de texto com a palavra em questão. Simples assim.
+    \nMinha fonte de dados 📊 é o site [Sinônimos](https://sinonimos.com.br). Este bot não tem qualquer ligação com a equipe do Sinônimos.
+    \n📢 Encontrou problemas? Tem alguma sugestão? Entre em contato com @cylonboy!
+    \n👨‍💻 O código-fonte pode ser encontrado nesta página do [Github](https://github.com/pedlor/sinonimobot)`)
+})
+
+// default reply when the user sends a non-text message
+bot.on('message', ctx => {
+    ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
+})
+
 // response when the user sends a text message
 bot.on('text', async ctx => {
     word = ctx.update.message.text
@@ -67,17 +80,5 @@ const fetchData = async (url) => {
         return null;
     }
 }
-
-// default reply when the user sends a non-text message
-bot.on('message', ctx => {
-    ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
-})
-
-bot.command('sobre', ctx => {
-    ctx.replyWithMarkdown(`Para encontrar os sinônimos de uma palavra, envie uma mensagem de texto com a palavra em questão. Simples assim.
-    \nMinha fonte de dados 📊 é o site [Sinônimos](https://sinonimos.com.br). Este bot não tem qualquer ligação com a equipe do Sinônimos.
-    \n📢 Encontrou problemas? Tem alguma sugestão? Pode enviar uma mensagem para @cylonboy
-    \n👨‍💻 O código-fonte pode ser encontrado nesta página do [Github](https://github.com/pedlor/sinonimobot)`)
-})
 
 bot.startPolling()
