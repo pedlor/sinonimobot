@@ -23,11 +23,6 @@ bot.command('sobre', ctx => {
     \n👨‍💻 O código-fonte pode ser encontrado nesta página do [Github](https://github.com/pedlor/sinonimobot)`)
 })
 
-// default reply when the user sends a non-text message
-bot.on('message', ctx => {
-    ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
-})
-
 // response when the user sends a text message
 bot.on('text', async ctx => {
     word = ctx.update.message.text
@@ -50,6 +45,11 @@ bot.on('text', async ctx => {
     }).catch((error) => {
         ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
     })
+})
+
+// default reply when the user sends a non-text message
+bot.on('message', ctx => {
+    ctx.reply('Eu não sei o que fazer com isso. Você precisa me enviar uma mensagem de texto')
 })
 
 // create the url that will be scrapped
