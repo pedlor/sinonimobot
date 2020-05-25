@@ -1,10 +1,11 @@
-//const env = require('./.env')
+const env = require('./.env')
 require('http').createServer(() => {
     console.log(`Server is running`)
 }).listen(process.env.PORT)
 const axios = require('axios')
 const cheerio = require('cheerio')
 const Telegraf = require('telegraf')
+const session = require('telegraf/session')
 const bot = new Telegraf(process.env.token || env.token)
 
 // start bot command
@@ -24,27 +25,30 @@ bot.command('sobre', ctx => {
 })
 
 // response when the user sends a text message
-bot.on('text', async ctx => {
+bot.on('text', ctx => {
     word = ctx.update.message.text
     url = createUrl(word)
-    await fetchData(url).then(async (response) => {
-        if (response) {
-            for (i = 0; i < response.length; i++) {
-                if (response[i].meaning != "") {
-                    await ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n⚠ *Sentido da palavra*: ${response[i].meaning}
-                    \n🔡 *Sinônimos*: ${response[i].synonyms}`)
-                } else {
-                    await ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n✅ *Sinônimos*: ${response[i].synonyms}`)
+    fetchData(url)
+        .then((response) => {
+            if (response) {
+                for (i = 0; i < response.length; i++) {
+                    if (response[i].meaning != "") {
+                        ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+                        \n⚠ *Sentido da palavra*: ${response[i].meaning}
+                        \n🔡 *Sinônimos*: ${response[i].synonyms}`)
+                    } else {
+                        ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+                        \n✅ *Sinônimos*: ${response[i].synonyms}`)
+                    }
                 }
+            } else {
+                ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄')
             }
-        } else {
-            ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄')
-        }
-    }).catch((error) => {
-        ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
-    })
+        })
+        .catch((err) => {
+            ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
+            console.log(err);
+        })
 })
 
 // default reply when the user sends a non-text message
@@ -60,7 +64,7 @@ const fetchData = async (url) => {
     let fetchedData
     try {
         fetchedData = await axios.request(url, { responseEncoding: 'latin1' }).catch((err) => {
-            console.log(err);
+            throw new Error(err);
         })
         const $ = cheerio.load(fetchedData.data)
 
@@ -77,10 +81,11 @@ const fetchData = async (url) => {
         })
 
         return synonymsArray
-    } catch (error) {
-        console.log(`Error:\n ${error}`)
+    } catch (err) {
+        console.log("Request failed with status code 404");
         return null;
     }
 }
 
+bot.use(session());
 bot.startPolling();
