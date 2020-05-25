@@ -1,11 +1,11 @@
-//const env = require('./.env')
+const env = require('./.env')
 require('http').createServer(() => {
     console.log(`Server is running`)
 }).listen(process.env.PORT)
 const axios = require('axios')
 const cheerio = require('cheerio')
 const Telegraf = require('telegraf')
-const bot = new Telegraf(process.env.token)
+const bot = new Telegraf(process.env.token || env.token)
 
 // start bot command
 bot.start(async ctx => {
@@ -59,7 +59,9 @@ const createUrl = word => { return url = `https://www.sinonimos.com.br/${word}` 
 const fetchData = async (url) => {
     let fetchedData
     try {
-        fetchedData = await axios.request(url, { responseEncoding: 'latin1' })
+        fetchedData = await axios.request(url, { responseEncoding: 'latin1' }).catch((err) => {
+            console.log(err);
+        })
         const $ = cheerio.load(fetchedData.data)
 
         $('.number').remove()
@@ -76,7 +78,7 @@ const fetchData = async (url) => {
 
         return synonymsArray
     } catch (error) {
-        console.log(`Error status:\n ${error.status}`)
+        console.log(`Error:\n ${error}`)
         return null;
     }
 }
