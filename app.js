@@ -8,10 +8,12 @@ const Telegraf = require('telegraf')
 const session = require('telegraf/session')
 const bot = new Telegraf(process.env.token || env.token)
 
+bot.use(session());
+
 // start bot command
-bot.start(async ctx => {
-    name = ctx.update.message.from.first_name
-    await ctx.replyWithMarkdown(`Olá, ${name}.
+bot.start(ctx => {
+    const name = ctx.update.message.from.first_name
+    ctx.replyWithMarkdown(`Olá, ${name}.
     \nBasta me enviar uma mensagem com uma palavra qualquer que eu mostrarei os sinônimos desta palavra.
     \n_Espero ser útil!_ ;)`)
 })
@@ -25,31 +27,30 @@ bot.command('sobre', ctx => {
 })
 
 // response when the user sends a text message
-bot.on('text', ctx => {
+bot.on('text', async ctx => {
     word = ctx.update.message.text
     url = createUrl(word)
-    fetchData(url)
-        .then((response) => {
-            if (response) {
-                for (i = 0; i < response.length; i++) {
-                    if (response[i].meaning != "") {
-                        ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                        \n⚠ *Sentido da palavra*: ${response[i].meaning}
-                        \n🔡 *Sinônimos*: ${response[i].synonyms}`)
-                    } else {
-                        ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                        \n✅ *Sinônimos*: ${response[i].synonyms}`)
-                    }
-                }
+    try {
+        const res = await fetchData(url);
+        if (!res) {
+            return ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄');
+        }
+
+        for (i = 0; i < res.length; i++) {
+            if (res[i].meaning != "") {
+                ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+                    \n⚠ *Sentido da palavra*: ${res[i].meaning}
+                    \n🔡 *Sinônimos*: ${res[i].synonyms}`)
             } else {
-                ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄')
+                ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+                    \n✅ *Sinônimos*: ${res[i].synonyms}`)
             }
-        })
-        .catch((err) => {
-            ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
-            console.log(err);
-        })
-})
+        }
+    } catch (err) {
+        ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
+        console.log(err);
+    }
+});
 
 // default reply when the user sends a non-text message
 bot.on('message', ctx => {
@@ -61,31 +62,29 @@ const createUrl = word => { return url = `https://www.sinonimos.com.br/${word}` 
 
 // gets the html from the given URL and returns only the synonyms
 const fetchData = async (url) => {
-    let fetchedData
+    let fetchedData;
     try {
         fetchedData = await axios.request(url, { responseEncoding: 'latin1' }).catch((err) => {
             throw new Error(err);
         })
-        const $ = cheerio.load(fetchedData.data)
+        const $ = cheerio.load(fetchedData.data);
 
         $('.number').remove()
         let synonymsArray = []
         $('.s-wrapper').each((i, el) => {
             let obj = {}
-            let meaning = $(el).find('.sentido').text()
-            let synonyms = $(el).find('.sinonimos').text()
-            obj.meaning = meaning.replace(':', '')
-            obj.synonyms = synonyms.substring(1)
-
-            synonymsArray[i] = obj
+            let meaning = $(el).find('.sentido').text();
+            let synonyms = $(el).find('.sinonimos').text();
+            obj.meaning = meaning.replace(':', '');
+            obj.synonyms = synonyms.substring(1);
+            synonymsArray[i] = obj;
         })
 
-        return synonymsArray
+        return synonymsArray;
     } catch (err) {
         console.log("Request failed with status code 404");
         return null;
     }
 }
 
-bot.use(session());
-bot.startPolling();
+bot.launch();
