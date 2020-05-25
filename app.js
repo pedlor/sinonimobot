@@ -26,31 +26,35 @@ bot.command('sobre', ctx => {
     \n👨‍💻 O código-fonte pode ser encontrado nesta página do [Github](https://github.com/pedlor/sinonimobot)`)
 })
 
-// response when the user sends a text message
-bot.on('text', async ctx => {
-    word = ctx.update.message.text
-    url = createUrl(word)
-    try {
-        const res = await fetchData(url);
-        if (!res) {
-            return ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄');
-        }
-
-        for (i = 0; i < res.length; i++) {
-            if (res[i].meaning != "") {
-                ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n⚠ *Sentido da palavra*: ${res[i].meaning}
-                    \n🔡 *Sinônimos*: ${res[i].synonyms}`)
-            } else {
-                ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
-                    \n✅ *Sinônimos*: ${res[i].synonyms}`)
-            }
-        }
-    } catch (err) {
-        ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
-        console.log(err);
-    }
+bot.on('text', ctx => {
+    ctx.reply('Bot em manutenção');
 });
+
+// response when the user sends a text message
+// bot.on('text', async ctx => {
+//     word = ctx.update.message.text
+//     url = createUrl(word)
+//     try {
+//         const res = await fetchData(url);
+//         if (!res) {
+//             return ctx.replyWithMarkdown('Desculpe, não encontrei nada! 🙄');
+//         }
+
+//         for (i = 0; i < res.length; i++) {
+//             if (res[i].meaning != "") {
+//                 ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+//                     \n⚠ *Sentido da palavra*: ${res[i].meaning}
+//                     \n🔡 *Sinônimos*: ${res[i].synonyms}`)
+//             } else {
+//                 ctx.replyWithMarkdown(`ℹ *Palavra*: ${word}
+//                     \n✅ *Sinônimos*: ${res[i].synonyms}`)
+//             }
+//         }
+//     } catch (err) {
+//         ctx.replyWithMarkdown('Desculpe, algo deu errado! 🙄')
+//         console.log(err);
+//     }
+// });
 
 // default reply when the user sends a non-text message
 bot.on('message', ctx => {
