@@ -1,4 +1,4 @@
-const env = require('./.env')
+//const env = require('./.env')
 require('http').createServer(() => {
     console.log(`Server is running`)
 }).listen(process.env.PORT)
@@ -83,4 +83,4 @@ const fetchData = async (url) => {
     }
 }
 
-bot.startPolling()
+bot.startPolling();
